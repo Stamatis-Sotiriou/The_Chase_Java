@@ -44,8 +44,8 @@ class Tiles extends JPanel {
 
 class MyLabel extends JLabel {
 	MyLabel() {
-		this.setForeground(Color.WHITE);	//Text color
-		this.setFont(new Font("MV Boli", Font.ROMAN_BASELINE, 18));	//Font, bold(+), size
+		this.setForeground(Color.WHITE);
+		this.setFont(new Font("MV Boli", Font.ROMAN_BASELINE, 18));
 	}
 }
 
@@ -65,7 +65,7 @@ class QuestionPanel extends JPanel {
 	private ArrayList<String>  Questions;
 	private ArrayList<ArrayList<String>> Answers;
 	
-	private Random rand; 
+	private Random rand = new Random();
 	private int index;
 	
 	void setLists() {
@@ -117,14 +117,13 @@ class QuestionPanel extends JPanel {
 	}
 	
 	
-	void setIndex() {
-		this.rand = new Random();
-		this.index = this.rand.nextInt(this.Questions.size());
+	int getRand() {
+		return rand.nextInt(this.Questions.size());
 	}
 	
 	
-	void getQuestion() {
-		setIndex();
+	void setQuestion() {
+		this.index = getRand();
 		
 		Qlabel.setText(Questions.get(this.index));
 		ansAlabel.setText(this.Answers.get(this.index).get(0));
@@ -145,8 +144,11 @@ class QuestionPanel extends JPanel {
 class MainGame extends JFrame implements ActionListener{
 	
 	QuestionPanel Qpanel;
+	Chaser chaser;
 	
-	MainGame(){
+	MainGame(Chaser chaser){
+		this.chaser = chaser;
+		
 		this.setSize(700, 700);
 		this.setTitle("The Chase!");
 		this.setLocationRelativeTo(null);
@@ -189,13 +191,15 @@ class MainGame extends JFrame implements ActionListener{
 		this.Qpanel.ansB.addActionListener(this);
 		this.Qpanel.ansC.addActionListener(this);
 
+		this.Qpanel.setQuestion();
+
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);	
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("Pressed");
+		this.Qpanel.setQuestion();
 	}
 
 }
