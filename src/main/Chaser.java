@@ -1,5 +1,7 @@
 package main;
 
+import java.util.Random;
+
 class Chaser{
 	
 	private int type;
@@ -10,8 +12,15 @@ class Chaser{
 	int getType(){
 		return this.type;
 	}
-	int chaserAns() {
-		return -1;
+	int chaserAns(int solution) {
+		Random rand = new Random();
+		int ans = rand.nextInt(100);
+		if(ans > 5) {
+			ans = solution;
+		}
+		
+		return ans;
 	}
 	
+}
 }
