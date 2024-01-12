@@ -56,7 +56,6 @@ class QuestionPanel extends JPanel {
 	JButton ansB; 
 	JButton ansC;
 	
-	
 	private JLabel Qlabel = new MyLabel();
 	private JLabel ansAlabel = new MyLabel();
 	private JLabel ansBlabel = new MyLabel();
@@ -64,24 +63,30 @@ class QuestionPanel extends JPanel {
 	
 	private ArrayList<String>  Questions;
 	private ArrayList<ArrayList<String>> Answers;
+	private ArrayList<Integer> Solutions; 
 	
 	private Random rand = new Random();
 	private int index;
-	
+		
 	void setLists() {
 		this.Questions = new ArrayList<String>(Arrays.asList(
 				"<html>Ερώτηση 1</html>", 
 				"<html>Ερώτηση 2</html>", 
-				"<html>Ερώτηση 3</html>"));
+				"<html>Ερώτηση 3</html>")
+				);
 		
 		this.Answers = new ArrayList<ArrayList<String>>(Arrays.asList());
 		this.Answers.add(new ArrayList<String>(Arrays.asList(" a", " b", " c")));
 		this.Answers.add(new ArrayList<String>(Arrays.asList(" a", " b", " c")));
 		this.Answers.add(new ArrayList<String>(Arrays.asList(" a", " b", " c")));
 		
+		
+		this.Solutions = new ArrayList<Integer>(Arrays.asList(2,3,2));
 	}
 	
 	QuestionPanel(){
+		
+		
 		this.setBackground(Color.BLUE);
 		this.setBounds(50, 500, 600, 150);
 		this.setLayout(null);
@@ -95,18 +100,19 @@ class QuestionPanel extends JPanel {
 		
 		this.ansA = new JButton();
 		this.ansA.setBounds(0,100,200,50);
-		this.ansA.setBackground(new Color(0, 100, 255));
+		this.ansA.setBackground(new Color(0, 0, 90));
 		this.ansA.setBorder(Qborder);
 				
 		this.ansB = new JButton();
 		this.ansB.setBounds(200,100,200,50);
-		this.ansB.setBackground(new Color(0, 100, 255));
+		this.ansB.setBackground(new Color(0, 0, 90));
 		this.ansB.setBorder(Qborder);
 
 		this.ansC = new JButton();
 		this.ansC.setBounds(400,100,200,50);
-		this.ansC.setBackground(new Color(0, 100, 255));
+		this.ansC.setBackground(new Color(0, 0, 90));
 		this.ansC.setBorder(Qborder);
+		this.ansC.setFocusable(false);
 		
 		this.add(this.question);
 		this.add(this.ansA);
@@ -116,14 +122,24 @@ class QuestionPanel extends JPanel {
 		setLists();
 	}
 	
-	
-	int getRand() {
-		return rand.nextInt(this.Questions.size());
+	int getSolution() {
+		return this.Solutions.get(this.index);
 	}
 	
+	int getQuestinsSize() {
+		return this.Questions.size();
+	}
+	
+	void removeQuestion() {
+		this.Questions.remove(this.index);
+		this.Answers.remove(this.index);
+	}
+	
+
 	
 	void setQuestion() {
-		this.index = getRand();
+		
+		this.index = rand.nextInt(this.Questions.size());
 		
 		Qlabel.setText(Questions.get(this.index));
 		ansAlabel.setText(this.Answers.get(this.index).get(0));
@@ -135,9 +151,51 @@ class QuestionPanel extends JPanel {
 		this.ansB.add(ansBlabel);
 		this.ansC.add(ansClabel);
 	
-		this.Questions.remove(this.index);
-		this.Answers.remove(this.index);
+		removeQuestion();
 	}
+	
+	void playerSelected(JButton button) {
+		button.setBackground(new Color(0, 100, 255));
+	}
+	
+	void pause() {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	void disablebtn() {
+		this.ansA.setEnabled(false);
+		this.ansB.setEnabled(false);
+		this.ansC.setEnabled(false);
+	}
+	void enablebtn() {
+		this.ansA.setEnabled(true);
+		this.ansB.setEnabled(true);
+		this.ansC.setEnabled(true);
+	}
+	
+	void endTurn(int buttonNumber, JButton button) {
+		boolean correctPlayer = false;
+		if(getSolution() == buttonNumber) {
+			correctPlayer = true;
+		}
+		playerSelected(button);
+		disablebtn();
+		pause();
+		
+		
+		nextTurn();
+	}
+	
+	void nextTurn() {
+		
+	}
+	
+	
+
 }
 
 
@@ -145,6 +203,8 @@ class MainGame extends JFrame implements ActionListener{
 	
 	QuestionPanel Qpanel;
 	Chaser chaser;
+
+	int btn_num;
 	
 	MainGame(Chaser chaser){
 		this.chaser = chaser;
@@ -199,7 +259,13 @@ class MainGame extends JFrame implements ActionListener{
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		this.Qpanel.setQuestion();
+		if(e.getSource() == this.Qpanel.ansA) {
+			this.Qpanel.endTurn(1, this.Qpanel.ansA);
+		} else if(e.getSource() == this.Qpanel.ansB) {
+			this.Qpanel.endTurn(2, this.Qpanel.ansB);
+		} else if(e.getSource() == this.Qpanel.ansC) {
+			this.Qpanel.endTurn(3, this.Qpanel.ansC);
+		}
 	}
 
 }
